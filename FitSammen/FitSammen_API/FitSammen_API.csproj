@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="BusinessLogicLayer\" />
     <Folder Include="Controllers\" />
     <Folder Include="Model\" />
-    <Folder Include="BusinessLogicLayer\" />
     <Folder Include="DTOs\" />
     <Folder Include="ModelConversion\" />
     <Folder Include="DatabaseAccessLayer\" />

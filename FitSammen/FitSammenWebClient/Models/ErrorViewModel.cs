@@ -1,4 +1,4 @@
-namespace FitSammen_WebClient.Models
+namespace FitSammenWebClient.Models
 {
     public class ErrorViewModel
     {

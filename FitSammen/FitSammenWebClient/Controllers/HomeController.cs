@@ -1,8 +1,8 @@
-using System.Diagnostics;
-using FitSammen_WebClient.Models;
+using FitSammenWebClient.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
-namespace FitSammen_WebClient.Controllers
+namespace FitSammenWebClient.Controllers
 {
     public class HomeController : Controller
     {
