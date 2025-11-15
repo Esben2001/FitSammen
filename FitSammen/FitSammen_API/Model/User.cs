@@ -1,4 +1,6 @@
-﻿namespace FitSammen_API.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FitSammen_API.Model
 {
     public abstract class User
     {
