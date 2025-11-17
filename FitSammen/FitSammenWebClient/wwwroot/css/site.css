@@ -141,6 +141,8 @@ body {
     overflow-x: hidden; /*Skjuler det, der er udenfor vinduet*/
     scroll-snap-type: x mandatory; /*Sikrer at scroll rammer et nyt card*/
     flex: 1; /*Giver samme længde uafhængig af indhold*/
+    padding: 10px;
+    margin-left: 10px;
 }
 
 .hold-card{
