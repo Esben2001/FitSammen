@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using FitSammen_API.Model;
-using FitSammen_API.ModelConversion;
-using Xunit;
+﻿using FitSammen_API.Model;
 
-namespace TestModelConversion   
+namespace TestModelConversion
 {
     public class TestModelConversion
     {
@@ -55,7 +52,7 @@ namespace TestModelConversion
                 startTime: new TimeOnly(9, 0),
                 classType: ClassType.StrengthTraining
             );
-            
+
             cls.addMember(new MemberBooking());
             cls.addMember(new MemberBooking());
             cls.addMember(new MemberBooking());
