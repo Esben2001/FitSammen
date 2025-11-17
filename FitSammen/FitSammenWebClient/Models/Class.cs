@@ -3,7 +3,7 @@
     public class Class
     {
         public int Id { get; set; }
-        public TrainingDate TrainingDate { get; set; }
+        public DateOnly TrainingDate { get; set; }
         public Employee Instructor { get; set; }
         public string Description { get; set; }
         public Room Room { get; set; }
@@ -15,7 +15,7 @@
         public TimeOnly StartTime { get; set; }
         public ClassType ClassType { get; set; }
 
-        public Class(int id, TrainingDate trainingDate, Employee employee, string description,
+        public Class(int id, DateOnly trainingDate, Employee employee, string description,
             Room room, string name, int capacity, int durationInMinutes, TimeOnly startTime, ClassType classType)
         {
             Id = id;
