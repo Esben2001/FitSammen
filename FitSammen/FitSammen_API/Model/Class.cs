@@ -14,7 +14,7 @@
         public int DurationInMinutes { get; set; }
         public TimeOnly StartTime { get; set; }
         public ClassType ClassType { get; set; }
-
+        
         public Class(int id, TrainingDate trainingDate, Employee instructor, 
             Room room, string name, int capacity, int durationInMinutes, TimeOnly startTime, ClassType classType)
         {
