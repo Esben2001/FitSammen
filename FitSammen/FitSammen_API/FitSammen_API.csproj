@@ -13,8 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="BusinessLogicLayer\" />
-    <Folder Include="Controllers\" />
     <Folder Include="Model\" />
     <Folder Include="ModelConversion\" />
     <Folder Include="DatabaseAccessLayer\" />
