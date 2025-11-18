@@ -18,11 +18,15 @@ namespace FitSammenWebClient.ServiceLayer
             UseUrl = BaseUrl;
             UseUrl += "Class";
 
+            // https://localhost:7033/api/Class
+
             bool hasValidId = (id > 0);
             if (hasValidId)
             {
                 UseUrl += "/" + id.ToString();
+            // https://localhost:7033/api/Class/4
             }
+
             try
             {
                 var response = await CallServiceGet();
@@ -59,6 +63,7 @@ namespace FitSammenWebClient.ServiceLayer
         {
             bool savedOk = false;
 
+            // https://localhost:7033/api/MemberBooking
             UseUrl = BaseUrl;
             UseUrl += "MemberBooking";
 
