@@ -1,5 +1,7 @@
 ﻿using FitSammen_API.DatabaseAccessLayer;
+using FitSammen_API.Exceptions;
 using FitSammen_API.Model;
+using System.Linq;
 {
 
 }
@@ -39,17 +41,17 @@ namespace FitsammenAPITest
 
             //Assert
             Assert.NotEmpty(retrievedClasses);
-            Assert.Equal(retrievedClasses.First().Id, classToCompare.Id);
-            Assert.Equal(retrievedClasses.First().TrainingDate, classToCompare.TrainingDate);
-            Assert.Equal(retrievedClasses.First().Instructor.FirstName, classToCompare.Instructor.FirstName);
-            Assert.Equal(retrievedClasses.First().Instructor.LastName, classToCompare.Instructor.LastName);
-            Assert.Equal(retrievedClasses.First().Description, classToCompare.Description);
-            Assert.Equal(retrievedClasses.First().Room.RoomName, classToCompare.Room.RoomName);
-            Assert.Equal(retrievedClasses.First().Name, classToCompare.Name);
-            Assert.Equal(retrievedClasses.First().Capacity, classToCompare.Capacity);
-            Assert.Equal(retrievedClasses.First().DurationInMinutes, classToCompare.DurationInMinutes);
-            Assert.Equal(retrievedClasses.First().StartTime, classToCompare.StartTime);
-            Assert.Equal(retrievedClasses.First().ClassType, classToCompare.ClassType);
+            Assert.Equal(retrievedClasses.FirstOrDefault().Id, classToCompare.Id);
+            Assert.Equal(retrievedClasses.FirstOrDefault().TrainingDate, classToCompare.TrainingDate);
+            Assert.Equal(retrievedClasses.FirstOrDefault().Instructor.FirstName, classToCompare.Instructor.FirstName);
+            Assert.Equal(retrievedClasses.FirstOrDefault().Instructor.LastName, classToCompare.Instructor.LastName);
+            Assert.Equal(retrievedClasses.FirstOrDefault().Description, classToCompare.Description);
+            Assert.Equal(retrievedClasses.FirstOrDefault().Room.RoomName, classToCompare.Room.RoomName);
+            Assert.Equal(retrievedClasses.FirstOrDefault().Name, classToCompare.Name);
+            Assert.Equal(retrievedClasses.FirstOrDefault().Capacity, classToCompare.Capacity);
+            Assert.Equal(retrievedClasses.FirstOrDefault().DurationInMinutes, classToCompare.DurationInMinutes);
+            Assert.Equal(retrievedClasses.FirstOrDefault().StartTime, classToCompare.StartTime);
+            Assert.Equal(retrievedClasses.FirstOrDefault().ClassType, classToCompare.ClassType);
         }
 
         [Fact]
@@ -63,6 +65,14 @@ namespace FitsammenAPITest
 
             //Assert
             Assert.True(res);
+        }
+
+        public void CreateMemberBookingClassFullFail()
+        {
+            //Arrange
+            //Act
+            //Arrange
+            Assert.Throws<DataAccessException>(() => _memberAccess.CreateMemberBooking(3, 2));
         }
     }
 }
