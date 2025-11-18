@@ -3,7 +3,6 @@ using FitSammen_API.Model;
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Transactions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FitSammen_API.DatabaseAccessLayer
 {
@@ -39,10 +38,14 @@ namespace FitSammen_API.DatabaseAccessLayer
                 "END;";
             try
             {
-                using (TransactionScope scope = new TransactionScope())
+                var tOptions = new TransactionOptions
                 {
-                using (SqlConnection conn = new SqlConnection(ConnectionString))
-                using (SqlCommand readCommand = new SqlCommand(queryString, conn))
+                    IsolationLevel = IsolationLevel.ReadUncommitted
+                };
+                using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, tOptions))
+                {
+                    using (SqlConnection conn = new SqlConnection(ConnectionString))
+                    using (SqlCommand readCommand = new SqlCommand(queryString, conn))
 
                     {
                         readCommand.Parameters.AddWithValue("@MemberUserNumber", memberUserNumber);
@@ -63,7 +66,7 @@ namespace FitSammen_API.DatabaseAccessLayer
                             throw new DataAccessException("No database connection available.");
 
                         }
-                        
+
                     }
                     scope.Complete();
                 }
