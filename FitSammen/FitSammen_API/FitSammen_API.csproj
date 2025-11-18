@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Folder Include="Model\" />
-    <Folder Include="ModelConversion\" />
+    <Folder Include="Mapping\" />
     <Folder Include="DatabaseAccessLayer\" />
   </ItemGroup>
 

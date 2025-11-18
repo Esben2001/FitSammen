@@ -2,5 +2,6 @@
 {
     public interface IClassService
     {
+        public IEnumerable<Model.Class> GetUpcomingClasses();
     }
 }

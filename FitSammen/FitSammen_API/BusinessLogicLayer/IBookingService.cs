@@ -2,5 +2,6 @@
 {
     public interface IBookingService
     {
+        public BookingResult BookClass(int memberId, int classId);
     }
 }

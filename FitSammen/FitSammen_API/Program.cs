@@ -1,3 +1,4 @@
+using FitSammen_API.BusinessLogicLayer;
 using FitSammen_API.DatabaseAccessLayer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddTransient<IClassAccess, ClassAccess>();
 builder.Services.AddTransient<IMemberAccess, MemberAccess>();
+builder.Services.AddTransient<IBookingService, BookingService>();
+builder.Services.AddTransient<IClassService, ClassService>();
 
 var app = builder.Build();
 

@@ -1,81 +1,117 @@
-﻿using FitSammen_API.Model;
-using FitSammen_API.ModelConversion;
+﻿using System;
+using FitSammen_API.Mapping;
+using FitSammen_API.Model;
+using FitSammen_API.BusinessLogicLayer;
+using Xunit;
 
 namespace FitsammenAPITest
 {
     public class TestModelConversion
     {
-        //[Fact]
-        //public void ToClassListItemDto_MapsDomainClassToDtoCorrectly()
-        //{
-        //    // arrange
-        //    var trainingDate = new TrainingDate(
-        //        DateOnly.Parse("2025-01-01"),
-        //        true,
-        //        "Morning Strength"
-        //    );
+        [Fact]
+        public void ToClassListItemDTO_MapsAsExpected()
+        {
+            // arrange
+            var cls = new Class(
+                id: 5,
+                trainingDate: new DateOnly(2025, 1, 1),
+                instructor: new Employee(),
+                description: string.Empty,
+                room: new Room(),
+                name: "Strength",
+                capacity: 25,
+                durationInMinutes: 50,
+                startTime: new TimeOnly(18, 30),
+                classType: ClassType.StrengthTraining
+            );
 
-        //    var instructor = new Employee(
-        //        firstName: "John",
-        //        lastName: "Doe",
-        //        email: "john.doe@example.com",
-        //        phone: "12345678",
-        //        birthDate: new DateOnly(1990, 1, 1),
-        //        userNumber: 1001,
-        //        userType: UserType.Employee,
-        //        CPRNumber: "123456789"
-        //    );
+            // act
+            var dto = ModelConversion.ToClassListItemDTO(cls);
 
-        //    var location = new Location(
-        //        streetName: "Main St",
-        //        housenumber: 10,
-        //        zipCodeNumber: 12345,
-        //        cityName: "Cityville",
-        //        countryName: "Countryland"
-        //    );
+            // assert
+            Assert.Equal(5, dto.ClassId);
+            Assert.Equal(new DateOnly(2025, 1, 1), dto.Date);
+            Assert.Equal("Strength", dto.ClassName);
+            Assert.Equal(ClassType.StrengthTraining, dto.ClassType);
+            Assert.Equal(new TimeOnly(18, 30), dto.StartTime);
+            Assert.Equal(50, dto.DurationInMinutes);
+            Assert.Equal(25, dto.Capacity);
+        }
 
-        //    var room = new Room(
-        //        roomId: 1,
-        //        roomName: "Room A",
-        //        capacity: 20,
-        //        location: location
-        //    );
+        [Fact]
+        public void ToBookingResponseDTO_MapsAsExpected_OnSuccess()
+        {
+            // arrange
+            var result = new BookingResult
+            {
+                Status = BookingStatus.Success,
+                BookingID = 123
+            };
 
-        //    var cls = new Class(
-        //        id: 1,
-        //        trainingDate: trainingDate,
-        //        instructor: instructor,
-        //        description: "Best morning workout ever",
-        //        room: room,
-        //        name: "Morning Strength",
-        //        capacity: 10,
-        //        durationInMinutes: 60,
-        //        startTime: new TimeOnly(9, 0),
-        //        classType: ClassType.StrengthTraining
-        //    );
+            // act
+            var dto = ModelConversion.ToBookingResponseDTO(result);
 
-        //    cls.addMember(new MemberBooking());
-        //    cls.addMember(new MemberBooking());
-        //    cls.addMember(new MemberBooking());
+            // assert
+            Assert.Equal(123, dto.BookingId);
+            Assert.Equal("Success", dto.Status);
+            Assert.Equal("Booking successful.", dto.Message);
+        }
 
-        //    // act
-        //    var dto = ModelConversion.ToClassListItemDTO(cls);
+        [Fact]
+        public void ToBookingResponseDTO_MapsClassFull_AndNullBookingIdToZero()
+        {
+            // arrange
+            var result = new BookingResult
+            {
+                Status = BookingStatus.ClassFull,
+                BookingID = null
+            };
 
-        //    // assert
-        //    Assert.Equal(1, dto.ClassId);
-        //    Assert.Equal(new DateOnly(2025, 1, 1), dto.Date);
-        //    Assert.True(dto.IsAvailable);
-        //    Assert.Equal("Morning Strength", dto.ClassName);
-        //    Assert.Equal("John Doe", dto.InstructorName);
-        //    Assert.Equal("Best morning workout ever", dto.Description);
-        //    Assert.Equal(ClassType.StrengthTraining, dto.ClassType);
-        //    Assert.Equal(new TimeOnly(9, 0), dto.StartTime);
-        //    Assert.Equal(60, dto.DurationInMinutes);
-        //    Assert.Equal("Room A", dto.RoomName);
-        //    Assert.Equal(10, dto.Capacity);
-        //    Assert.Equal(3, dto.ParticipantCount);
-        //    Assert.Equal(7, dto.RemainingSpots);
-        //    Assert.False(dto.IsFull);
-        //}
+            // act
+            var dto = ModelConversion.ToBookingResponseDTO(result);
+
+            // assert
+            Assert.Equal(0, dto.BookingId);
+            Assert.Equal("ClassFull", dto.Status);
+            Assert.Equal("Booking failed: Member has already booked this class.", dto.Message);
+        }
+
+        [Fact]
+        public void ToBookingResponseDTO_MapsErrorWithDefaultMessage()
+        {
+            // arrange
+            var result = new BookingResult
+            {
+                Status = BookingStatus.Error,
+                BookingID = null
+            };
+
+            // act
+            var dto = ModelConversion.ToBookingResponseDTO(result);
+
+            // assert
+            Assert.Equal(0, dto.BookingId);
+            Assert.Equal("Error", dto.Status);
+            Assert.Equal("Booking failed: Unknown error.", dto.Message);
+        }
+
+        [Fact]
+        public void ToBookingResponseDTO_UnknownStatus_UsesDefaultMessage()
+        {
+            // arrange
+            var result = new BookingResult
+            {
+                Status = (BookingStatus)999,
+                BookingID = null
+            };
+
+            // act
+            var dto = ModelConversion.ToBookingResponseDTO(result);
+
+            // assert
+            Assert.Equal(0, dto.BookingId);
+            Assert.Equal("999", dto.Status); // Enum ToString for undefined value yields numeric string
+            Assert.Equal("Booking failed: Unknown error.", dto.Message);
+        }
     }
 }
