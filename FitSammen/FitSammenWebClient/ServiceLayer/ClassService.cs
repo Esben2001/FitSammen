@@ -16,15 +16,12 @@ namespace FitSammenWebClient.ServiceLayer
             List<Class>? result = new List<Class>();
 
             UseUrl = BaseUrl;
-            UseUrl += "Class";
-
-            // https://localhost:7033/api/Class
+            UseUrl += "classes";
 
             bool hasValidId = (id > 0);
             if (hasValidId)
             {
                 UseUrl += "/" + id.ToString();
-            // https://localhost:7033/api/Class/4
             }
 
             try
@@ -59,18 +56,16 @@ namespace FitSammenWebClient.ServiceLayer
             return result;
         }
 
-        public async Task<bool> SignUpMemberToClass(Member member, Class theClass)
+        public async Task<bool> SignUpMemberToClass(int userNumber, int classId)
         {
             bool savedOk = false;
 
-            // https://localhost:7033/api/MemberBooking
             UseUrl = BaseUrl;
-            UseUrl += "MemberBooking";
+            UseUrl += "classes/" + classId + "/bookings";
 
             var request = new MemberBookingRequest
             {
-                MemberId = member.UserNumber,
-                ClassId = theClass.Id
+                MemberId = userNumber,
             };
 
             try

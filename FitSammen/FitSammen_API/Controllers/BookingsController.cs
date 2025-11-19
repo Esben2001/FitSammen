@@ -19,9 +19,7 @@ namespace FitSammen_API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<BookingResponseDTO> CreateBooking(
-            int classId,
-            [FromBody] BookingRequestDTO request)
+        public ActionResult<BookingResponseDTO> CreateBooking(int classId, [FromBody] BookingRequestDTO request)
         {
             var result = _bookingService.BookClass(request.MemberId, classId);
 

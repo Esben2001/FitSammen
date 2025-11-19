@@ -5,7 +5,7 @@ namespace TestAPI.Controllers
 {   //https://localhost:7033/api/Class/
     [Route("api/[controller]")]
     [ApiController]
-    public class ClassController : ControllerBase
+    public class ClassesController : ControllerBase
     {
         // GET: api/<ClassController>
         [HttpGet]

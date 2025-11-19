@@ -31,15 +31,18 @@ namespace FitSammenWebClient.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> SignUpToClass(Member User, int ClassId)
+        public async Task<ActionResult> SignUpToClass(int userNumber, int ClassId)
         {
-            User.UserNumber = 2;
+            var user = new Member
+            {
+                UserNumber = userNumber
+            };
 
             Boolean result = false;
             IEnumerable<Class>? classes = await _classLogic.GetAllClassesAsync(ClassId);
             Class currentClass = classes.ElementAt(0);
             
-            result = await _classLogic.signUpAMember(User, currentClass);
+            result = await _classLogic.signUpAMember(userNumber, ClassId);
 
             if (result)
             {

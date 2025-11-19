@@ -1,7 +1,7 @@
 ﻿@model FitSammenWebClient.ViewModel.ClassListViewModel
 
 @{
-    var member = new Member();
+    var memberNumber = 2; 
 }
 
 @{
@@ -27,7 +27,7 @@
             <h1 class="overskrift">Fitness sjovere sammen</h1>
             <p class="underoverskrift">Motivation er lettest sammen</p>
         </div>
-        <form method="get">
+        <form method="get" asp-action="Index">
             <div class="filterbar">
                 <select name="centre" id="centre">
                     <option value="all">Alle centre</option>
@@ -59,14 +59,14 @@
                 <div class="hold-card">
                     <br /> <b>Holdtype: </b> @item.ClassType
                     <br /> <b>Hold: </b> @item.ClassType
-                    <br /> <b>Lokation: </b>@item.Room.Location.StreetName
-                    <b>, </b>@item.Room.Location.Zipcode.City.CityName
                     <br /> <b>Kapacitet: </b>@item.Capacity pladser
                     <br /> <b>Kl: </b> @item.StartTime
+                    <br /> <b>Lokation: </b>@item.Room.Location.StreetName
+                    <b>, </b>@item.Room.Location.Zipcode.City.CityName
                     <br /> <b>Længde: </b>@item.DurationInMinutes minutter
                     <br /> <b>Pladser tilbage: </b>@item.Remainingspots
                     <form method="post" asp-action="SignUpToClass">
-                        <input name="User" id="UserNumber" value="@member" hidden="hidden" />
+                        <input name="userNumber" id="UserNumber" value="@memberNumber" hidden="hidden" />
                         <input name="ClassId" id="ClassId" value="@item.Id" hidden="hidden" />
                     <br /> <input type="submit" value="tilmeld" class="btn btn-primary" />
                     </form>

@@ -11,17 +11,12 @@ namespace FitSammenWebClient.BusinessLogicLayer
             _classService = new ClassService(inConfiguration);
         }
 
-        public async Task<Boolean> signUpAMember(Member member, Class theClass)
+        public async Task<Boolean> signUpAMember(int member, int theClass)
         {
             Boolean result = false;
-            if (theClass.Participants.Count() >= theClass.Capacity)
-            {
-                return result;
-            }
-            else
-            {
-                return result = await _classService.SignUpMemberToClass(member, theClass);
-            }
+
+            return result = await _classService.SignUpMemberToClass(member, theClass);
+
         }
 
         public async Task<IEnumerable<Class>?> GetAllClassesAsync(int id = -1)

@@ -4,7 +4,7 @@ namespace TestAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MemberBookingController : ControllerBase
+    public class Bookings : ControllerBase
     {
         [HttpPost]
         public IActionResult CreateBooking([FromBody] CreateBookingDto dto)
