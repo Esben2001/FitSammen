@@ -1,4 +1,5 @@
 ﻿using FitSammen_API.DatabaseAccessLayer;
+using FitSammen_API.Exceptions;
 
 namespace FitSammen_API.BusinessLogicLayer
 {
@@ -13,7 +14,15 @@ namespace FitSammen_API.BusinessLogicLayer
 
         public IEnumerable<Model.Class> GetUpcomingClasses()
         {
-            return _classAccess.GetUpcomingClasses();
+            try
+            {
+                return _classAccess.GetUpcomingClasses();
+            }
+            catch (DataAccessException)
+            {
+                throw;
+            }
+
         }
     }
 }

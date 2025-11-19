@@ -4,6 +4,7 @@
     {
         Success,
         ClassFull,
+        AlreadySignedUp,
         Error
     }
 }

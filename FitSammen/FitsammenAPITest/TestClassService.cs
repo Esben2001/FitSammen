@@ -15,8 +15,8 @@ namespace FitSammen_API.Tests
             // Arrange
             var expectedClasses = new List<Class>
             {
-                new Class(1, DateOnly.FromDateTime(DateTime.Today.AddDays(1)), new Employee(), "Morning yoga", new Room(), "Yoga", 20, 60, new TimeOnly(8,0), ClassType.Yoga),
-                new Class(2, DateOnly.FromDateTime(DateTime.Today.AddDays(2)), new Employee(), "Spin class", new Room(), "Spinning", 15, 45, new TimeOnly(9,30), ClassType.Spinning)
+                new Class(1, DateOnly.FromDateTime(DateTime.Today.AddDays(1)), new Employee(), "Morning yoga", new Room(), "Yoga", 20, 5, 60, new TimeOnly(8,0), ClassType.Yoga),
+                new Class(2, DateOnly.FromDateTime(DateTime.Today.AddDays(2)), new Employee(), "Spin class", new Room(), "Spinning", 15, 3, 45, new TimeOnly(9,30), ClassType.Spinning)
             };
 
             var fakeClassAccess = new FakeClassAccess
@@ -52,32 +52,20 @@ namespace FitSammen_API.Tests
         }
 
         [Fact]
-        public void GetUpcomingClasses_Throws_WhenDalThrows()
+        public void GetUpcomingClasses_PropagatesException()
         {
-            // Arrange
-            var fakeClassAccess = new FakeClassAccess
-            {
-                ThrowException = true
-            };
-
+            var fakeClassAccess = new FakeClassAccess { Throw = true };
             var service = new ClassService(fakeClassAccess);
-
-            // Act & Assert
             Assert.Throws<InvalidOperationException>(() => service.GetUpcomingClasses());
         }
 
-        // Fake DAL implementation used for testing
         private sealed class FakeClassAccess : IClassAccess
         {
             public IEnumerable<Class> ClassesToReturn { get; set; } = new List<Class>();
-            public bool ThrowException { get; set; }
-
+            public bool Throw { get; set; }
             public IEnumerable<Class> GetUpcomingClasses()
             {
-                if (ThrowException)
-                {
-                    throw new InvalidOperationException("DAL failure");
-                }
+                if (Throw) throw new InvalidOperationException("Failure");
                 return ClassesToReturn;
             }
         }

@@ -9,71 +9,79 @@ namespace FitSammen_APITest
     public class BookingServiceTests
     {
         [Fact]
+        public void BookClass_ReturnsAlreadySignedUp_WhenMemberAlreadyBooked()
+        {
+            // Arrange
+            var fakeMemberAccess = new MemberAccessMock { AlreadySignedUp = true };
+            var service = new BookingService(fakeMemberAccess);
+
+            // Act
+            var result = service.BookClass(1, 10);
+
+            // Assert
+            Assert.Equal(BookingStatus.AlreadySignedUp, result.Status);
+            Assert.Null(result.BookingID);
+        }
+
+        [Fact]
         public void BookClass_ReturnsSuccess_WhenDalCreatesBooking()
         {
             // Arrange
-            var fakeMemberAccess = new MemberAccessMock
-            {
-                NewBookingId = 42
-            };
-
+            var fakeMemberAccess = new MemberAccessMock { NewBookingId = 42 };
             var service = new BookingService(fakeMemberAccess);
 
-            int memberId = 1;
-            int classId = 10;
-
             // Act
-            var result = service.BookClass(memberId, classId);
+            var result = service.BookClass(1, 10);
 
             // Assert
             Assert.Equal(BookingStatus.Success, result.Status);
             Assert.Equal(42, result.BookingID);
         }
 
-        // Class full: DAL throws DataAccessException
         [Fact]
-        public void BookClass_ReturnsClassFull_WhenDalThrowsDataAccessException()
+        public void BookClass_ReturnsError_WhenDalThrowsDataAccessException()
         {
+            // DataAccessException means the DAL call failed before returning a booking id
             // Arrange
-            var fakeMemberAccess = new MemberAccessMock
-            {
-                ThrowDataAccessException = true
-            };
-
+            var fakeMemberAccess = new MemberAccessMock { ThrowDataAccessException = true };
             var service = new BookingService(fakeMemberAccess);
 
-            int memberId = 1;
-            int classId = 10;
-
             // Act
-            var result = service.BookClass(memberId, classId);
-
-            // Assert
-            Assert.Equal(BookingStatus.ClassFull, result.Status);
-            Assert.Equal(0, result.BookingID);
-        }
-
-        // Other errors: DAL throws generic Exception
-        [Fact]
-        public void BookClass_ReturnsError_WhenDalThrowsGenericException()
-        {
-            // Arrange
-            var fakeMemberAccess = new MemberAccessMock
-            {
-                ThrowGenericException = true
-            };
-
-            var service = new BookingService(fakeMemberAccess);
-
-            int memberId = 1;
-            int classId = 10;
-
-            // Act
-            var result = service.BookClass(memberId, classId);
+            var result = service.BookClass(1, 10);
 
             // Assert
             Assert.Equal(BookingStatus.Error, result.Status);
-            Assert.Equal(0, result.BookingID);
+            Assert.Null(result.BookingID);
+        }
+
+        [Fact]
+        public void BookClass_ReturnsClassFull_WhenDalReturnsZeroBookingId()
+        {
+            // Arrange
+            var fakeMemberAccess = new MemberAccessMock { NewBookingId = 0 };
+            var service = new BookingService(fakeMemberAccess);
+
+            // Act
+            var result = service.BookClass(1, 10);
+
+            // Assert
+            Assert.Equal(BookingStatus.ClassFull, result.Status);
+            Assert.Null(result.BookingID);
+        }
+
+        [Fact]
+        public void BookClass_ReturnsError_WhenDalReturnsNegativeBookingId()
+        {
+            // Arrange
+            var fakeMemberAccess = new MemberAccessMock { NewBookingId = -1 };
+            var service = new BookingService(fakeMemberAccess);
+
+            // Act
+            var result = service.BookClass(1, 10);
+
+            // Assert
+            Assert.Equal(BookingStatus.Error, result.Status);
+            Assert.Null(result.BookingID);
         }
 
         private sealed class MemberAccessMock : IMemberAccess
@@ -81,6 +89,7 @@ namespace FitSammen_APITest
             public int NewBookingId { get; set; }
             public bool ThrowDataAccessException { get; set; }
             public bool ThrowGenericException { get; set; }
+            public bool AlreadySignedUp { get; set; }
 
             public int CreateMemberBooking(int memberUserNumber, int classId)
             {
@@ -97,10 +106,7 @@ namespace FitSammen_APITest
                 return NewBookingId;
             }
 
-            public bool IsMemberSignedUp(int memberBookingId)
-            {
-                throw new NotImplementedException();
-            }
+            public bool IsMemberSignedUp(int memberUserNumber, int classID) => AlreadySignedUp;
         }
     }
 }
