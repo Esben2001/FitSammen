@@ -48,7 +48,7 @@ namespace FitSammen_API.DatabaseAccessLayer
                     using (SqlCommand readCommand = new SqlCommand(queryString, conn))
 
                     {
-                        readCommand.Parameters.AddWithValue("@MemberUserNumber", memberUserID);
+                        readCommand.Parameters.AddWithValue("@MemberUserID", memberUserID);
                         readCommand.Parameters.AddWithValue("@ClassId", classId);
 
                         if (conn != null)
@@ -88,7 +88,7 @@ namespace FitSammen_API.DatabaseAccessLayer
                 using (SqlConnection conn = new SqlConnection(ConnectionString))
                 using (SqlCommand readCommand = new SqlCommand(queryString, conn))
                 {
-                    readCommand.Parameters.AddWithValue("@MemberBookingI", memberID);
+                    readCommand.Parameters.AddWithValue("@MemberID", memberID);
                     readCommand.Parameters.AddWithValue("@classID", classID);
                     if (conn != null)
                     {
