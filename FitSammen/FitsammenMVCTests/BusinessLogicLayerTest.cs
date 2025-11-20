@@ -1,90 +1,98 @@
 ﻿using FitSammenWebClient.BusinessLogicLayer;
 using FitSammenWebClient.Models;
 using Microsoft.Extensions.Configuration;
+using System.Transactions;
 namespace FitsammenMVCTests
 {
     public class BusinessLogicLayerTest
     {
-        [Fact]
-        public async void SignUpMemberWhenClassIsFull_ReturnIsFull()
+        private static ClassLogic CreateClassLogic()
         {
-            // Arrange: fake IConfiguration
             var settings = new Dictionary<string, string?>
             {
-                { "ServiceUrlToUse", "https://localhost:7033/api/" }
+                { "ServiceUrlToUse", "https://localhost:7229/api/" }
             };
 
             IConfiguration config = new ConfigurationBuilder()
                 .AddInMemoryCollection(settings)
                 .Build();
 
-            //Arrange
-            Member m1 = new Member("Joe", "Hansen", "Fake1@email.dk", "12345678", DateOnly.FromDateTime(DateTime.Now), 1, UserType.Customer);
-            Member m2 = new Member("John", "Johnny", "Fake2@email.dk", "87654321", DateOnly.FromDateTime(DateTime.Now), 2, UserType.Customer);
-            Member testMember = new Member("TEST", "TEST", "TEST2@email.dk", "77777777", DateOnly.FromDateTime(DateTime.Now), 2, UserType.Customer);
-
-            Employee instructor = new Employee("Kim", "Kimmer", "kim@12.dk", "23232323", DateOnly.FromDateTime(DateTime.Now), 3, UserType.Employee, "230802-2342");
-            Location location = new Location("TestGade", 10, 9000, "Aalborg", "Danmark");
-            Room room = new Room(1, "Room1", 2, location);
-            Class fullClass = new Class(1, DateOnly.FromDateTime(DateTime.Now), instructor, "Fyldt klasse", room, "YOGA", 2, 120, TimeOnly.FromDateTime(DateTime.Now), ClassType.Yoga);
-
-            fullClass.Participants = new List<MemberBooking>
-            {
-                new MemberBooking { Member = m1 },
-                new MemberBooking { Member = m2 }
-            };
-
-            ClassLogic classLogic = new ClassLogic(config);
-
-            //Act
-           // Boolean res = await classLogic.signUpAMember(testMember, fullClass);
-
-            //Assert
-            // Assert.False(res);
-            Assert.Equal(2, fullClass.Participants.Count());
-            Assert.DoesNotContain(fullClass.Participants, mb => mb.Member == testMember);
+            return new ClassLogic(config);
         }
 
         [Fact]
-        public async void SignUpMemberWhenClassIsNotFull_ReturnIsSuccess()
+        public async Task SignUpMemberWhenClassIsFull_ReturnIsFull()
         {
-            // Arrange: fake IConfiguration
-            var settings = new Dictionary<string, string?>
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                { "ServiceUrlToUse", "https://localhost:7033/api/" }
-            };
+                // Arrange
+                ClassLogic logic = CreateClassLogic();
+                int testMemberId = 3; 
+                int fullClassId = 6;  
 
-            IConfiguration config = new ConfigurationBuilder()
-                .AddInMemoryCollection(settings)
-                .Build();
+                // Act
+                MemberBookingResponse? result = await logic.signUpAMember(testMemberId, fullClassId);
 
-            //Arrange
-            Member m1 = new Member("Joe", "Hansen", "Fake1@email.dk", "12345678", DateOnly.FromDateTime(DateTime.Now), 1, UserType.Customer);
-            Member m2 = new Member("John", "Johnny", "Fake2@email.dk", "87654321", DateOnly.FromDateTime(DateTime.Now), 2, UserType.Customer);
-            Member testMember = new Member("TEST", "TEST", "TEST2@email.dk", "77777777", DateOnly.FromDateTime(DateTime.Now), 2, UserType.Customer);
+                // Assert
+                Assert.NotNull(result);
+                Assert.Equal("ClassFull", result.Status);
 
-            Employee instructor = new Employee("Kim", "Kimmer", "kim@12.dk", "23232323", DateOnly.FromDateTime(DateTime.Now), 3, UserType.Employee, "230802-2342");
-            Location location = new Location("TestGade", 10, 9000, "Aalborg", "Danmark");
-            Room room = new Room(1, "Room1", 2, location);
-            Class notFullClass = new Class(1, DateOnly.FromDateTime(DateTime.Now), instructor, "Ikke Fyldt klasse", room, "YOGA", 3, 120, TimeOnly.FromDateTime(DateTime.Now), ClassType.Yoga);
-
-            notFullClass.Participants = new List<MemberBooking>
-            {
-                new MemberBooking { Member = m1 },
-                new MemberBooking { Member = m2 }
-            };
-
-            ClassLogic classLogic = new ClassLogic(config);
-
-            //Act
-           // Boolean res = await classLogic.signUpAMember(testMember, notFullClass);
-
-            //Assert
-           // Assert.True(res);
-            //De sidste 2 asserts virker ikke, da API functionen ikke er færdig endnu
-
-            //Assert.Equal(2, notFullClass.Participants.Count());
-            //Assert.Contains(notFullClass.Participants, mb => mb.Member == testMember);
+            }
         }
+
+        [Fact]
+        public async Task SignUpMemberWhenClassIsNotFull_ReturnIsSuccess()
+        {
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                // Arrange
+                ClassLogic logic = CreateClassLogic();
+                int testMemberId = 5;
+                int notFullClassId = 1; 
+
+                // Act
+                MemberBookingResponse? result = await logic.signUpAMember(testMemberId, notFullClassId);
+
+                // Assert
+                Assert.NotNull(result);
+                Assert.Equal("Success", result.Status);
+            }
+        }
+
+        [Fact]
+        public async Task SignUpMemberWhenMemberIsAlreadySignedUp_ReturnAlreadySignedUp()
+        {
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                // Arrange
+                ClassLogic logic = CreateClassLogic();
+                int testMemberId = 3;
+                int classId = 1;
+
+                // Act – prøv igen
+                MemberBookingResponse? result = await logic.signUpAMember(testMemberId, classId);
+
+                // Assert
+                Assert.NotNull(result);
+                Assert.Equal("AlreadySignedUp", result.Status);
+            }
+        }
+
+        [Fact]
+        public async Task GetAllClassesAsync_ReturnsListOfClasses()
+        {
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                ClassLogic logic = CreateClassLogic();
+
+                // Act
+                IEnumerable<Class>? result = await logic.GetAllClassesAsync();
+
+                // Assert
+                Assert.NotNull(result);
+                Assert.NotEmpty(result);
+            }
+        }
+
     }
 }
