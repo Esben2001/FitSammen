@@ -3,6 +3,7 @@ using FitSammen_API.Mapping;
 using FitSammen_API.Model;
 using FitSammen_API.BusinessLogicLayer;
 using Xunit;
+using FitSammen_API.DTOs;
 
 namespace FitsammenAPITest
 {
@@ -90,6 +91,50 @@ namespace FitsammenAPITest
             Assert.Equal(0, dto.BookingId);
             Assert.Equal("999", dto.Status);
             Assert.Equal("Booking failed: Unknown error.", dto.Message);
+        }
+
+        [Fact]
+        public void ToWaitingListResponseDTOSuccess()
+        {
+            WaitingListResult result = new WaitingListResult
+            {
+                Status = WaitingListStatus.Success,
+                WaitingListPosition = 3
+            };
+
+            WaitingListEntryResponseDTO dto = ModelConversion.ToWaitingListEntryResponseDTO(result);
+
+            Assert.Equal(3, dto.WaitingListEntryPosition);
+            Assert.Equal(WaitingListStatus.Success, dto.Status);
+        }
+
+        [Fact]
+        public void ToWaitingListResponseDTOFull()
+        {
+            WaitingListResult result = new WaitingListResult
+            {
+                Status = WaitingListStatus.AlreadySignedUp,
+                WaitingListPosition = 2
+            };
+
+            WaitingListEntryResponseDTO dto = ModelConversion.ToWaitingListEntryResponseDTO(result);
+
+            Assert.Equal(2, dto.WaitingListEntryPosition);
+            Assert.Equal(WaitingListStatus.AlreadySignedUp, dto.Status);
+        }
+
+        [Fact]
+        public void ToWaitingListResponseDTOError()
+        {
+            WaitingListResult result = new WaitingListResult
+            {
+                Status = WaitingListStatus.Error,
+                WaitingListPosition = null
+            };
+            WaitingListEntryResponseDTO dto = ModelConversion.ToWaitingListEntryResponseDTO(result);
+
+            Assert.Equal(-1, dto.WaitingListEntryPosition);
+            Assert.Equal(WaitingListStatus.Error, dto.Status);
         }
     }
 }

@@ -48,5 +48,22 @@ namespace FitSammen_API.Mapping
                 }
             };
         }
+
+        public static WaitingListEntryResponseDTO ToWaitingListEntryResponseDTO(WaitingListResult result)
+        {
+            WaitingListEntryResponseDTO dto = new WaitingListEntryResponseDTO();
+            {
+                dto.WaitingListEntryPosition = result.WaitingListPosition ?? -1;
+                dto.Status = result.Status;
+                dto.Message = result.Status switch
+                {
+                    WaitingListStatus.Success => "Successfully added to the waiting list.",
+                    WaitingListStatus.AlreadySignedUp => "Member is already on the waiting list.",
+                    WaitingListStatus.Error => "Failed to add to the waiting list: Unknown error.",
+                    _ => "Failed to add to the waiting list: Unknown error."
+                };
+            }
+            return dto;
+        }
     }
 }
