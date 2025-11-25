@@ -32,9 +32,9 @@ namespace FitSammenWebClient.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SignUpToWaitingList(int memberNumber, int ClassId)
+        public async Task<ActionResult> SignUpToWaitingList(int userNumber, int ClassId)
         {
-            var result = await _waitingListLogic.AddMemberToWaitingListAsync(ClassId, memberNumber);
+            WaitingListEntryResponse? result = await _waitingListLogic.AddMemberToWaitingListAsync(ClassId, userNumber);
             
             if (result == null)
             {

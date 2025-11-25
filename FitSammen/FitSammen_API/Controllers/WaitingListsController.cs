@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitSammen_API.Controllers
 {
-    [Route("api/classes/{classId}/waitingslists")]
+    [Route("api/classes/{classId}/waitinglists")]
     [ApiController]
     public class WaitingListsController : ControllerBase
     {

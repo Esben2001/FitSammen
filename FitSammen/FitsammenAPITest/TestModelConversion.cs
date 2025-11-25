@@ -104,7 +104,7 @@ namespace FitsammenAPITest
 
             WaitingListEntryResponseDTO dto = ModelConversion.ToWaitingListEntryResponseDTO(result);
 
-            Assert.Equal(3, dto.WaitingListEntryPosition);
+            Assert.Equal(3, dto.WaitingListPosition);
             Assert.Equal(WaitingListStatus.Success, dto.Status);
         }
 
@@ -119,7 +119,7 @@ namespace FitsammenAPITest
 
             WaitingListEntryResponseDTO dto = ModelConversion.ToWaitingListEntryResponseDTO(result);
 
-            Assert.Equal(2, dto.WaitingListEntryPosition);
+            Assert.Equal(2, dto.WaitingListPosition);
             Assert.Equal(WaitingListStatus.AlreadySignedUp, dto.Status);
         }
 
@@ -133,7 +133,7 @@ namespace FitsammenAPITest
             };
             WaitingListEntryResponseDTO dto = ModelConversion.ToWaitingListEntryResponseDTO(result);
 
-            Assert.Equal(-1, dto.WaitingListEntryPosition);
+            Assert.Equal(-1, dto.WaitingListPosition);
             Assert.Equal(WaitingListStatus.Error, dto.Status);
         }
     }

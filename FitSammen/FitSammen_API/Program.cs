@@ -16,6 +16,8 @@ builder.Services.AddTransient<IMemberAccess, MemberAccess>();
 builder.Services.AddTransient<IBookingService, BookingService>();
 builder.Services.AddTransient<IClassService, ClassService>();
 
+builder.Services.AddTransient<IWaitingListService, WaitingListService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

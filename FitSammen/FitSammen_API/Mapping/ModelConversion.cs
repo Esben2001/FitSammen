@@ -53,7 +53,7 @@ namespace FitSammen_API.Mapping
         {
             WaitingListEntryResponseDTO dto = new WaitingListEntryResponseDTO();
             {
-                dto.WaitingListEntryPosition = result.WaitingListPosition ?? -1;
+                dto.WaitingListPosition = result.WaitingListPosition ?? -1;
                 dto.Status = result.Status;
                 dto.Message = result.Status switch
                 {
