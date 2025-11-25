@@ -1,0 +1,31 @@
+﻿using FitSammenDekstopClient.Model;
+using FitSammenDekstopClient.ServiceLayer;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FitSammenDekstopClient.BusinessLogicLayer
+{
+    public class ClassLogic
+    {
+        private IClassService _classService;
+
+        public ClassLogic(IConfiguration inConfiguration)
+        {
+            _classService = new ClassService(inConfiguration);
+        }
+
+        public async Task<IEnumerable<Class>?> GetAllClassesAsync()
+        {
+            return await _classService.GetAllClassesAsync();
+        }
+
+        public async Task<CreateClassResponse?> CreateClassAsync(CreateClassRequest request)
+        {
+            return await _classService.CreateClassAsync(request);
+        }
+    }
+}
