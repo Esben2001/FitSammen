@@ -6,6 +6,8 @@
         public int HouseNumber { get; set; }
         public Zipcode Zipcode { get; set; }
 
+        public string Address => $"{StreetName} {HouseNumber}, {Zipcode.ZipcodeNumber} {Zipcode.City.CityName}"; // Bruges I WinForms ComboBoxLocation til at vise fuld adresse
+
         public Location(string streetName, int housenumber, int zipCodeNumber, string cityName, string countryName)
         {
             StreetName = streetName;
@@ -15,11 +17,9 @@
             Zipcode zipcode = new Zipcode { ZipcodeNumber = zipCodeNumber, City = city };
             Zipcode = zipcode;
         }
-
         public Location()
         {
         }
-
     }
 
     public class Zipcode
@@ -38,4 +38,5 @@
     {
         public string CountryName { get; set; }
     }
+
 }
