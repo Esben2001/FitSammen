@@ -7,6 +7,8 @@
         public Zipcode Zipcode { get; set; }
         public int LocationId { get; set; }
 
+        public IEnumerable<Employee> Employees { get; set; }
+
         public Location(int locationId, string streetName, int housenumber, int zipCodeNumber, string cityName, string countryName)
         {
             LocationId = locationId;
@@ -16,7 +18,7 @@
             City city = new City { CityName = cityName, Country = country };
             Zipcode zipcode = new Zipcode { ZipcodeNumber = zipCodeNumber, City = city };
             Zipcode = zipcode;
-            
+            Employees = new List<Employee>();
         }
 
         public Location()

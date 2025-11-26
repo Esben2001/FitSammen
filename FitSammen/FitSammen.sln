@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitsammenMVCTests", "Fitsam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitsammenAPITest", "FitsammenAPITest\FitsammenAPITest.csproj", "{8066DB8B-F643-4F63-8F14-65AD5B7A0DA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitSammenDekstopClient", "FitSammenDekstopClient\FitSammenDekstopClient.csproj", "{20078731-8D97-4E4D-A263-ADE17BBF27C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitSammenDesktopClient", "FitSammenDekstopClient\FitSammenDesktopClient.csproj", "{20078731-8D97-4E4D-A263-ADE17BBF27C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

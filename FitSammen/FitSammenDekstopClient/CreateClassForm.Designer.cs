@@ -78,9 +78,9 @@
             comboBoxEmployee.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxEmployee.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             comboBoxEmployee.FormattingEnabled = true;
-            comboBoxEmployee.Location = new Point(285, 39);
+            comboBoxEmployee.Location = new Point(739, 39);
             comboBoxEmployee.Name = "comboBoxEmployee";
-            comboBoxEmployee.Size = new Size(102, 28);
+            comboBoxEmployee.Size = new Size(170, 28);
             comboBoxEmployee.TabIndex = 3;
             // 
             // comboBoxLocation
@@ -88,7 +88,7 @@
             comboBoxLocation.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxLocation.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             comboBoxLocation.FormattingEnabled = true;
-            comboBoxLocation.Location = new Point(393, 39);
+            comboBoxLocation.Location = new Point(285, 39);
             comboBoxLocation.Name = "comboBoxLocation";
             comboBoxLocation.Size = new Size(288, 28);
             comboBoxLocation.TabIndex = 4;
@@ -98,7 +98,7 @@
             comboBoxRoom.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxRoom.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             comboBoxRoom.FormattingEnabled = true;
-            comboBoxRoom.Location = new Point(689, 39);
+            comboBoxRoom.Location = new Point(579, 39);
             comboBoxRoom.Name = "comboBoxRoom";
             comboBoxRoom.Size = new Size(154, 28);
             comboBoxRoom.TabIndex = 5;
@@ -180,7 +180,7 @@
             // btnCreateClass
             // 
             btnCreateClass.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnCreateClass.Location = new Point(713, 398);
+            btnCreateClass.Location = new Point(779, 398);
             btnCreateClass.Name = "btnCreateClass";
             btnCreateClass.Size = new Size(130, 50);
             btnCreateClass.TabIndex = 14;
@@ -212,7 +212,7 @@
             // 
             lblEmployee.AutoSize = true;
             lblEmployee.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblEmployee.Location = new Point(285, 4);
+            lblEmployee.Location = new Point(739, 4);
             lblEmployee.Name = "lblEmployee";
             lblEmployee.Size = new Size(93, 25);
             lblEmployee.TabIndex = 17;
@@ -222,7 +222,7 @@
             // 
             lblLocation.AutoSize = true;
             lblLocation.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblLocation.Location = new Point(393, 4);
+            lblLocation.Location = new Point(285, 4);
             lblLocation.Name = "lblLocation";
             lblLocation.Size = new Size(84, 25);
             lblLocation.TabIndex = 18;
@@ -232,7 +232,7 @@
             // 
             lblRoom.AutoSize = true;
             lblRoom.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblRoom.Location = new Point(689, 4);
+            lblRoom.Location = new Point(579, 4);
             lblRoom.Name = "lblRoom";
             lblRoom.Size = new Size(66, 25);
             lblRoom.TabIndex = 19;
@@ -260,7 +260,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(855, 460);
+            ClientSize = new Size(921, 460);
             Controls.Add(textBoxDescription);
             Controls.Add(textBoxName);
             Controls.Add(lblRoom);
