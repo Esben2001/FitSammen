@@ -64,7 +64,17 @@ namespace FitSammen_API.Tests
             public IEnumerable<Class> ClassesToReturn { get; set; } = new List<Class>();
             public bool Throw { get; set; }
 
+            public int CreateClass(Class cls)
+            {
+                throw new NotImplementedException();
+            }
+
             public IEnumerable<Location> GetAllLocations()
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<Employee> GetEmployeesByLocationId(int LocationId)
             {
                 throw new NotImplementedException();
             }

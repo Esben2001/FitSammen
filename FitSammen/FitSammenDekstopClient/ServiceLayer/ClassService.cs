@@ -67,8 +67,6 @@ namespace FitSammenDekstopClient.ServiceLayer
             {
                 Status = CreateClassStatus.Error,
                 Message = "Fejl ved oprettelse af hold.",
-                ClassId = 0,
-                CreatedClass = null
             };
         }
     }
