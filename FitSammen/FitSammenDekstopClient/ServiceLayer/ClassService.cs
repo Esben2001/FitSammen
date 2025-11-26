@@ -38,7 +38,7 @@ namespace FitSammenDekstopClient.ServiceLayer
 
         public async Task<CreateClassResponse?> CreateClassAsync(CreateClassRequest request)
         {
-            UseUrl = BaseUrl + "classes";
+            UseUrl = BaseUrl + "Classes";
 
             try
             {

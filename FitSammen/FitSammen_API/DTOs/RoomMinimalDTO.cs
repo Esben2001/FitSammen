@@ -6,9 +6,12 @@ namespace FitSammen_API.DTOs
     {
         [Range(1, int.MaxValue, ErrorMessage = "RoomId must be a positive integer.")]
         public int RoomId { get; set; }
-        public RoomMinimalDTO(int roomId)
+
+        public LocationMinimalDTO Location { get; set; }
+        public RoomMinimalDTO(int roomId, int locationId)
         {
             RoomId = roomId;
+            Location = new LocationMinimalDTO(locationId);
         }
     }
 }

@@ -8,8 +8,6 @@
         public Zipcode Zipcode { get; set; }
         public IEnumerable<Employee> Employees { get; set; }
 
-        public string Address => $"{StreetName} {HouseNumber}, {Zipcode.ZipcodeNumber} {Zipcode.City.CityName}"; // Bruges I WinForms ComboBoxLocation til at vise fuld adresse
-
         public Location(string streetName, int housenumber, int zipCodeNumber, string cityName, string countryName)
         {
             StreetName = streetName;
@@ -41,5 +39,7 @@
     {
         public string CountryName { get; set; }
     }
+
+
 
 }

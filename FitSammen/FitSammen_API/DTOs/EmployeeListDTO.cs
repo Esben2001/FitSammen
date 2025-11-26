@@ -2,13 +2,13 @@
 {
     public class EmployeeListDTO
     {
-        public int EmployeeId { get; set; }
+        public int User_ID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
         public EmployeeListDTO(int employeeId, string firstName, string lastName)
         {
-            EmployeeId = employeeId;
+            User_ID = employeeId;
             FirstName = firstName;
             LastName = lastName;
         }

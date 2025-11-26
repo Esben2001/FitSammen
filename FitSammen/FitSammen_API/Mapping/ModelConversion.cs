@@ -158,7 +158,11 @@ namespace FitSammen_API.Mapping
         {
             Room r = new Room
             {
-                RoomId = room.RoomId
+                RoomId = room.RoomId,
+                Location = new Location
+                {
+                    LocationId = room.Location.LocationId
+                }
             };
             return r;
         }
@@ -182,7 +186,7 @@ namespace FitSammen_API.Mapping
         {
             Employee employee = new Employee
             {
-                User_ID = employeeDTO.EmployeeId
+                User_ID = employeeDTO.User_ID
             };
             return employee;
         }

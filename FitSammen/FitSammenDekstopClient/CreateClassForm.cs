@@ -167,7 +167,13 @@ namespace FitSammenDekstopClient
             _locations = await _locationLogic.GetAllLocationsAsync();
 
             comboBoxLocation.DataSource = _locations;
-            comboBoxLocation.DisplayMember = "Address";
+            comboBoxLocation.Format += (s, e) =>
+            {
+                if (e.ListItem is Location loc)
+                {
+                    e.Value = $"{loc.StreetName} {loc.HouseNumber}, {loc.Zipcode.ZipcodeNumber} {loc.Zipcode.City.CityName}";
+                }
+            };
             comboBoxLocation.ValueMember = "LocationId";
 
             comboBoxLocation.SelectedIndexChanged += comboBoxLocation_SelectedIndexChanged;
