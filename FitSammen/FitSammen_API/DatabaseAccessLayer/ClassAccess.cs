@@ -353,7 +353,7 @@ namespace FitSammen_API.DatabaseAccessLayer
             < 
             @NewEndDateTime 
             AND
-            @New_Start_DateTime
+            @NewStartDateTime
             <
             DATEADD(MINUTE, C.duration, CAST(C.trainingDate AS DATETIME) + CAST(C.startTime AS DATETIME))
             )
@@ -364,7 +364,7 @@ namespace FitSammen_API.DatabaseAccessLayer
             OUTPUT INSERTED.class_ID
             VALUES(
             @ClassName, @Description, @MemberCount, @Capacity, CONVERT(TIME(0), @NewStartDateTime),
-            CONVERT(TIME(0), DATEADD(minute, @NewDuration, 0)), CONVERT(DATE, @NewStartDateTime), @ClassType, @EmployeeId, @RoomId);
+            @NewDuration, CONVERT(DATE, @NewStartDateTime), @ClassType, @EmployeeId, @RoomId);
             END
             ELSE
             BEGIN

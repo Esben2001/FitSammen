@@ -125,5 +125,59 @@ namespace FitsammenAPITest
                 //Assert
                 Assert.Equal(1, FailedAndShowedPosition);
         }
+
+        [Fact]
+        public void WhenGettingAllLocations_AllTheLocationsAreReturned()
+        {
+            //Arrange
+            City CityToCompare = new City
+            {
+                CityName = "Copenhagen"
+            };
+            Zipcode ZipcodeToCompare = new Zipcode
+            {
+                ZipcodeNumber = 2100,
+                City = CityToCompare
+            };
+            Location LocationToCompare = new Location
+            {
+                LocationId = 1,
+                StreetName = "Fitness Street",
+                HouseNumber = 12,
+                Zipcode = ZipcodeToCompare
+            };
+            //Act
+            IEnumerable<Location> retrievedLocations = _classAccess.GetAllLocations();
+            //Assert
+            Assert.Equal(retrievedLocations.FirstOrDefault().LocationId, LocationToCompare.LocationId);
+            Assert.Equal(retrievedLocations.FirstOrDefault().StreetName, LocationToCompare.StreetName);
+            Assert.Equal(retrievedLocations.FirstOrDefault().HouseNumber, LocationToCompare.HouseNumber);
+            Assert.Equal(retrievedLocations.FirstOrDefault().Zipcode.ZipcodeNumber, LocationToCompare.Zipcode.ZipcodeNumber);
+            Assert.Equal(retrievedLocations.FirstOrDefault().Zipcode.City.CityName, LocationToCompare.Zipcode.City.CityName);
+        }
+
+        [Fact]
+        public void WhenChoosingALocation_AllTheRoomsAreReturned()
+        {
+            //Arrange
+            Location LocationToCompare = new Location
+            {
+                LocationId = 1
+            };
+            Room RoomToCompare = new Room
+            {
+                RoomId = 1,
+                RoomName = "Main Gym",
+                Capacity = 30,
+                Location = LocationToCompare
+            };
+            //Act
+            IEnumerable<Room> RetrievedRooms = _classAccess.GetRoomsByLocationId(1);
+            //Assert
+            Assert.Equal(RetrievedRooms.FirstOrDefault().RoomId, RoomToCompare.RoomId);
+            Assert.Equal(RetrievedRooms.FirstOrDefault().RoomName, RoomToCompare.RoomName);
+            Assert.Equal(RetrievedRooms.FirstOrDefault().Capacity, RoomToCompare.Capacity);
+            Assert.Equal(RetrievedRooms.FirstOrDefault().Location.LocationId, RoomToCompare.Location.LocationId);
+        }
     }
 }
