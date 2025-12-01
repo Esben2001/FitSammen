@@ -3,17 +3,17 @@ using FitSammenWebClient.ServiceLayer;
 
 namespace FitSammenWebClient.BusinessLogicLayer
 {
-    public class ClassLogic
+    public class ClassLogic : IClassLogic
     {
-        private readonly ClassService _classService;
-        public ClassLogic(IConfiguration inConfiguration)
+        private readonly IClassAccess _classService;
+        public ClassLogic(IClassAccess classAccess)
         {
-            _classService = new ClassService(inConfiguration);
+            _classService = classAccess;
         }
 
-        public async Task<MemberBookingResponse?> SignUpAMember(int member, int theClass)
+        public async Task<MemberBookingResponse?> SignUpAMember(int member, int theClass, string token)
         {
-            return await _classService.SignUpMemberToClassAsync(member, theClass);
+            return await _classService.SignUpMemberToClassAsync(member, theClass, token);
         }
 
         public async Task<IEnumerable<Class>?> GetAllClassesAsync(int id = -1)

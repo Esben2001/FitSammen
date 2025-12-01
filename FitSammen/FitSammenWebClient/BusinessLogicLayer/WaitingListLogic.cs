@@ -3,25 +3,19 @@ using FitSammenWebClient.ServiceLayer;
 
 namespace FitSammenWebClient.BusinessLogicLayer
 {
-    public class WaitingListLogic
+    public class WaitingListLogic : IWaitingListLogic
     {
         private readonly IWaitingListAccess _waitingListAccess;
 
-        // Production constructor keeps existing behavior
-        public WaitingListLogic(IConfiguration inConfiguration)
-        {
-            _waitingListAccess = new WaitingListService(inConfiguration);
-        }
-
-        // Test/DI friendly constructor
+        
         public WaitingListLogic(IWaitingListAccess waitingListAccess)
         {
             _waitingListAccess = waitingListAccess;
         }
 
-        public async Task<WaitingListEntryResponse?> AddMemberToWaitingListAsync(int classId, int memberNumber)
+        public async Task<WaitingListEntryResponse?> AddMemberToWaitingListAsync(int classId, int memberNumber, string token)
         {
-            return await _waitingListAccess.AddMemberToWaitingListAsync(classId, memberNumber);
+            return await _waitingListAccess.AddMemberToWaitingListAsync(classId, memberNumber, token);
         }
     }
 }
