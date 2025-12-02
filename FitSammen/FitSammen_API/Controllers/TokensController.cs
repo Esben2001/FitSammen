@@ -20,20 +20,26 @@ namespace FitSammen_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateToken([FromBody] LoginRequestDTO dto)
+        public ActionResult<LoginResponseDto> CreateToken([FromBody] LoginRequestDTO dto)
         {
-            string foundToken;
-
-            bool hasInput = ((!string.IsNullOrWhiteSpace(dto.Email)) && (!string.IsNullOrWhiteSpace(dto.Password)));
-
-            if (hasInput)
+            try
             {
-                foundToken = _tokenService.CreateToken(dto.Email!, dto.Password!);
-                return Ok(foundToken);
+                string foundToken;
+
+                bool hasInput = ((!string.IsNullOrWhiteSpace(dto.Email)) && (!string.IsNullOrWhiteSpace(dto.Password)));
+
+                if (hasInput)
+                {
+                    foundToken = _tokenService.CreateToken(dto.Email!, dto.Password!);
+                    return Ok(new LoginResponseDto { Token = foundToken });
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
-            else
-            {
-                return BadRequest();
+            catch {
+                return StatusCode(500, "Error");
             }
         }
 

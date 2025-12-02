@@ -31,10 +31,10 @@ namespace FitSammenWebClient.ServiceLayer
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
 
-                    var token = JsonSerializer.Deserialize<string>(responseBody,
+                    var result = JsonSerializer.Deserialize<LoginResponseModel>(responseBody,
                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                    return new LoginResponseModel { Token = token };
+                    return result;
 
                 }
                 else if (response != null && (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.BadRequest))
