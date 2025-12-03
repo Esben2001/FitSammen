@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Writers;
 using Microsoft.VisualBasic;
 using System.Collections.Generic;
 using System.Data;
+using System.Security.Cryptography;
 using System.Transactions;
 
 namespace FitSammen_API.DatabaseAccessLayer
@@ -240,7 +241,8 @@ namespace FitSammen_API.DatabaseAccessLayer
                             }
                         }
                         return waitingListPosition;
-                    } else
+                    }
+                    else
                     {
                         throw new DataAccessException("No database connection available.");
                     }
@@ -252,13 +254,13 @@ namespace FitSammen_API.DatabaseAccessLayer
             }
         }
 
-        public User FindUserByEmailAndPassword(string email, string password)
+        public User FindUserByEmailAndPassword(string email, byte[] hashedPassword)
         {
             User foundUser = new Member();
             // Prepare the SQL query
             string queryString = @"SELECT user_ID, firstName, lastName, email, ut.usertype 
             FROM [User] u JOIN UserTypes ut on u.userType_ID_FK = ut.UserType_ID  
-            WHERE email = @Email AND password = @Password;";
+            WHERE email = @Email AND password = @PasswordHash;";
 
             try
             {
@@ -266,27 +268,19 @@ namespace FitSammen_API.DatabaseAccessLayer
                 using (SqlCommand readCommand = new SqlCommand(queryString, conn))
                 {
                     readCommand.Parameters.AddWithValue("@Email", email);
-                    readCommand.Parameters.AddWithValue("@Password", password);
-                    
-                    if (conn != null)
+                    readCommand.Parameters.Add("@PasswordHash", SqlDbType.VarBinary).Value = hashedPassword;
+                    conn.Open();
+                    SqlDataReader reader = readCommand.ExecuteReader();
+                    if (reader.Read())
                     {
-                        conn.Open(); 
-                        SqlDataReader reader = readCommand.ExecuteReader();
-                        while (reader.Read())
-                        {   
-                            foundUser = new Member
-                            {
-                                User_ID = reader.GetInt32(reader.GetOrdinal("user_ID")),
-                                FirstName = reader.GetString(reader.GetOrdinal("firstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("lastName")),
-                                Email = reader.GetString(reader.GetOrdinal("email")),
-                                UserType = Enum.Parse<UserType>(reader.GetString(reader.GetOrdinal("usertype")))
-                            };
-                        }
-                    }
-                    else
-                    {
-                        throw new DataAccessException("No database connection available.");
+                        foundUser = new Member
+                        {
+                            User_ID = reader.GetInt32(reader.GetOrdinal("user_ID")),
+                            FirstName = reader.GetString(reader.GetOrdinal("firstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("lastName")),
+                            Email = reader.GetString(reader.GetOrdinal("email")),
+                            UserType = Enum.Parse<UserType>(reader.GetString(reader.GetOrdinal("usertype")))
+                        };
                     }
                 }
             }
@@ -295,6 +289,33 @@ namespace FitSammen_API.DatabaseAccessLayer
                 throw new DataAccessException("Error retrieving user result from database.", sqlEx);
             }
             return foundUser;
+        }
+
+        public byte[] GetSaltByEmail(string email)
+        {
+            byte[] StoredSalt = RandomNumberGenerator.GetBytes(16);
+            string queryString = @"SELECT PasswordSalt
+            FROM[User]
+            WHERE email = @email;";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                using (SqlCommand readCommand = new SqlCommand(queryString, conn))
+                {
+                    readCommand.Parameters.AddWithValue("@Email", email);
+                    conn.Open();
+                    SqlDataReader reader = readCommand.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        StoredSalt = (byte[])reader["PasswordSalt"];
+                    }
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                throw new DataAccessException("Error retrieving user result from database", sqlEx);
+            }
+            return StoredSalt;
         }
     }
 }

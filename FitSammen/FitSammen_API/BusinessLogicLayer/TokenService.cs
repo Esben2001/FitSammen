@@ -24,11 +24,20 @@ namespace FitSammen_API.BusinessLogicLayer
             _configuration = configuration;
         }
 
+
+
         public string CreateToken(string email, string password)
         {
             try
             {
-                User user = _memberAccess.FindUserByEmailAndPassword(email, password);
+               byte[] salt = _memberAccess.GetSaltByEmail(email); 
+                byte[] hashedPassword = _security.HashPassword(password, salt);
+
+                User user = _memberAccess.FindUserByEmailAndPassword(email, hashedPassword);
+                if(user is null)
+                {
+                    throw new UnauthorizedAccessException("Ugyldig email eller password");
+                }
 
                 SymmetricSecurityKey? signingKey = _security.GetSecurityKey();
                 if (signingKey is null)
@@ -72,26 +81,6 @@ namespace FitSammen_API.BusinessLogicLayer
 
             jwtString = new JwtSecurityTokenHandler().WriteToken(token);
             return jwtString;
-        }
-
-
-        public User FindUserByEmailAndPassword(string email, string password)
-        {
-            try
-            {
-                User user = _memberAccess.FindUserByEmailAndPassword(email, password);
-
-                if (user is null)
-                {
-                    throw new DataAccessException("User not found.");
-                }
-
-                return user;
-            }
-            catch (Exception)
-            {
-                throw new DataAccessException("Error retrieving user from the database.");
-            }
         }
     }
 }
