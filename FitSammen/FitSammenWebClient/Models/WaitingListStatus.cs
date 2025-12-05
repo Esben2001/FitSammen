@@ -3,7 +3,8 @@
     public enum WaitingListStatus
     {
         Success,
-        AlreadySignedUp,
+        AlreadySignedUpWL,
+        AlreadySignedUpMB,
         Error
     }
 }

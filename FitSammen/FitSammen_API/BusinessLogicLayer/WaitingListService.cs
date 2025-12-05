@@ -16,12 +16,21 @@ namespace FitSammen_API.BusinessLogicLayer
             WaitingListResult result = new WaitingListResult();
             try
             {
+                if(_memberAccess.IsMemberSignedUp(memberId, classId))
+                {
+                    result = new WaitingListResult
+                    {
+                        Status = WaitingListStatus.AlreadySignedUpMB,
+                        WaitingListPosition = null
+                    };
+                    return result;
+                }
                 int posRes = _memberAccess.IsMemberOnWaitingList(memberId, classId);
                 if (posRes > 0)
                 {
                     result = new WaitingListResult
                     {
-                        Status = WaitingListStatus.AlreadySignedUp,
+                        Status = WaitingListStatus.AlreadySignedUpWL,
                         WaitingListPosition = posRes
                     };
                 }

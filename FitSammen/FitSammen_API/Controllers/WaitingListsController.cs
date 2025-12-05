@@ -42,7 +42,8 @@ namespace FitSammen_API.Controllers
             return result.Status switch
             {
                 WaitingListStatus.Success => Created(string.Empty, wleResponseDTO),
-                WaitingListStatus.AlreadySignedUp => Conflict(wleResponseDTO),
+                WaitingListStatus.AlreadySignedUpWL => Conflict(wleResponseDTO),
+                WaitingListStatus.AlreadySignedUpMB => Conflict(wleResponseDTO),
                 WaitingListStatus.Error => StatusCode(500, wleResponseDTO),
                 _ => StatusCode(500, wleResponseDTO)
             };

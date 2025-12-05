@@ -35,7 +35,7 @@ namespace FitsammenAPITest
 
             WaitingListResult result = service.AddMemberToWaitingList(1, 10);
 
-            Assert.Equal(WaitingListStatus.AlreadySignedUp, result.Status);
+            Assert.Equal(WaitingListStatus.AlreadySignedUpWL, result.Status);
             Assert.Equal(5, result.WaitingListPosition);
         }
 

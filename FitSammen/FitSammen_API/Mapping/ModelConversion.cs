@@ -105,7 +105,8 @@ namespace FitSammen_API.Mapping
                 dto.Message = result.Status switch
                 {
                     WaitingListStatus.Success => "Successfully added to the waiting list.",
-                    WaitingListStatus.AlreadySignedUp => "Member is already on the waiting list.",
+                    WaitingListStatus.AlreadySignedUpWL => "Member is already on the waiting list.",
+                    WaitingListStatus.AlreadySignedUpMB => "Member is already signed up for the class.",
                     WaitingListStatus.Error => "Failed to add to the waiting list: Unknown error.",
                     _ => "Failed to add to the waiting list: Unknown error."
                 };

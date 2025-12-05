@@ -43,13 +43,13 @@ namespace FitsammenMVCTests
         [Fact]
         public async Task AddMemberToWaitingListAsync_ReturnsAlreadySignedUp()
         {
-            var mock = new WaitingListAccessMock { StatusToReturn = WaitingListStatus.AlreadySignedUp, PositionToReturn = null };
+            var mock = new WaitingListAccessMock { StatusToReturn = WaitingListStatus.AlreadySignedUpWL, PositionToReturn = null };
             var logic = new WaitingListLogic(mock);
 
             var result = await logic.AddMemberToWaitingListAsync(11, 6);
 
             Assert.NotNull(result);
-            Assert.Equal(WaitingListStatus.AlreadySignedUp, result.Status);
+            Assert.Equal(WaitingListStatus.AlreadySignedUpWL, result.Status);
             Assert.Null(result.WaitingListPosition);
         }
 

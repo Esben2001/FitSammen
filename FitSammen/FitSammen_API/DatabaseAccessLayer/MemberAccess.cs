@@ -29,47 +29,74 @@ namespace FitSammen_API.DatabaseAccessLayer
 
         public int CreateMemberBooking(int memberUserID, int classId)
         {
+            bool end = false;
+            int tries = -1;
+            int capacity = 0;
             int createdMemberBookingId = 0;
-            // Prepare the SQL query
-            string queryString = "UPDATE Class " +
-                "SET memberCount = memberCount + 1 " +
-                "WHERE class_ID = @ClassId " +
-                "AND memberCount < capacity; " +
-                "IF @@ROWCOUNT = 1 " +
-                "BEGIN " +
-                "INSERT INTO MemberBooking(memberUser_ID_FK, class_ID_FK) " +
-                "OUTPUT INSERTED.memberBookingID " +
-                "VALUES(@MemberUserID, @ClassId); " +
-                "END;";
+            string capacityCheck = @"SELECT capacity FROM Class WHERE class_ID = @ClassId;";
+            string insertBooking = @"INSERT INTO MemberBooking(memberUser_ID_FK, class_ID_FK) 
+                                    OUTPUT INSERTED.memberBookingID 
+                                    VALUES(@MemberUserID, @ClassIdInsert);";
             try
             {
-                TransactionOptions tOptions = new TransactionOptions
+                while (tries < 3 && end != true)
                 {
-                    IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted
-                };
-                using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, tOptions))
-                {
-                    using (SqlConnection conn = new SqlConnection(ConnectionString))
-                    using (SqlCommand readCommand = new SqlCommand(queryString, conn))
+                    tries++;
+                    int currCount = GetMemberCountFromClassId(classId);
 
+                    TransactionOptions tOptions = new TransactionOptions
                     {
-                        readCommand.Parameters.AddWithValue("@MemberUserID", memberUserID);
-                        readCommand.Parameters.AddWithValue("@ClassId", classId);
-
-                        if (conn != null)
+                        IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted
+                    };
+                    using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, tOptions))
+                    {
+                        using (SqlConnection conn = new SqlConnection(ConnectionString))
+                        using (SqlCommand readCommand = new SqlCommand(capacityCheck, conn))
                         {
-                            conn.Open();
-                            var res = readCommand.ExecuteScalar();
-                            createdMemberBookingId = Convert.ToInt32(res);
+                            readCommand.Parameters.AddWithValue("@ClassId", classId);
+                            if (conn != null)
+                            {
+                                conn.Open();
+                                var res = readCommand.ExecuteScalar();
+                                capacity = Convert.ToInt32(res);
+                                if (currCount >= capacity)
+                                {
+                                    end = true;
+                                    createdMemberBookingId = 0;
+                                }
+                            }
+                            else
+                            {
+                                throw new DataAccessException("No database connection available.");
+                            }
+                            readCommand.CommandText = insertBooking;
+                            readCommand.Parameters.AddWithValue("@MemberUserID", memberUserID);
+                            readCommand.Parameters.AddWithValue("@ClassIdInsert", classId);
+
+                            if (conn != null)
+                            {
+                                var res = readCommand.ExecuteScalar();
+                                createdMemberBookingId = Convert.ToInt32(res);
+                            }
+                            else
+                            {
+                                throw new DataAccessException("No database connection available.");
+
+                            }
+                        }
+                        int newCount = GetMemberCountFromClassId(classId);
+                        if (newCount <= capacity)
+                        {
+                            scope.Complete();
+                            end = true;
                         }
                         else
                         {
-                            throw new DataAccessException("No database connection available.");
-
+                            scope.Dispose();
+                            Random rnd = new Random();
+                            Thread.Sleep(rnd.Next(0, 150));
                         }
-
                     }
-                    scope.Complete();
                 }
             }
             catch (Exception ex)
@@ -116,14 +143,37 @@ namespace FitSammen_API.DatabaseAccessLayer
             return res;
         }
 
-
-
+        public int GetMemberCountFromClassId(int classId)
+        {
+            int res = 0;
+            string query = @"SELECT COUNT(*) AS memberCount 
+                        FROM MemberBooking 
+                        WHERE class_ID_FK = @ClassId;";
+            try
+            {
+                using (var conn = new SqlConnection(ConnectionString))
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ClassId", classId);
+                    //cmd.Parameters.AddWithValue("@CreatedAt", createdAt);
+                    conn.Open();
+                    var temp = cmd.ExecuteScalar();
+                    res = Convert.ToInt32(temp);
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                throw new DataAccessException("Error retrieving member count from database.", sqlEx);
+            }
+            return res;
+        }
 
         public int CreateWaitingListEntry(int MemberUserId, int ClassId)
         {
             int waitingListPosition = -1;
             int newId = 0;
             DateTime createdAt;
+            int memberCount = GetMemberCountFromClassId(ClassId);
 
             string insertQuery = @"
         INSERT INTO WaitingListEntry (memberUser_ID_FK, class_ID_FK, CreatedAt)
@@ -131,7 +181,7 @@ namespace FitSammen_API.DatabaseAccessLayer
         SELECT @MemberUserId, @ClassId, SYSDATETIME()
         FROM Class
         WHERE class_ID = @ClassId
-          AND memberCount = capacity;";
+          AND @MemberCount = capacity;";
 
             try
             {
@@ -147,6 +197,7 @@ namespace FitSammen_API.DatabaseAccessLayer
                     {
                         cmd.Parameters.AddWithValue("@MemberUserId", MemberUserId);
                         cmd.Parameters.AddWithValue("@ClassId", ClassId);
+                        cmd.Parameters.AddWithValue("@MemberCount", memberCount);
 
                         conn.Open();
 

@@ -17,7 +17,7 @@ namespace FitSammenWebClient.Controllers
         private readonly IClassLogic _classLogic;
         private readonly IWaitingListLogic _waitingListLogic;
         private readonly ILoginLogic _loginLogic;
-        
+
 
         public HomeController(ILogger<HomeController> logger, IClassLogic classLogic, IWaitingListLogic waitingListLogic, ILoginLogic loginLogic)
         {
@@ -25,7 +25,7 @@ namespace FitSammenWebClient.Controllers
             _classLogic = classLogic;
             _waitingListLogic = waitingListLogic;
             _loginLogic = loginLogic;
-            
+
         }
 
         [AllowAnonymous]
@@ -50,12 +50,12 @@ namespace FitSammenWebClient.Controllers
                 TempData["LoginError"] = "Udfyld venligst både email og adgangskode";
                 return RedirectToAction("Index");
             }
-           LoginResponseModel? responseModel = await _loginLogic.AuthenticateAndGetToken(loginModel.Email, loginModel.Password);
+            LoginResponseModel? responseModel = await _loginLogic.AuthenticateAndGetToken(loginModel.Email, loginModel.Password);
 
             if (responseModel == null)
             {
                 TempData["LoginError"] = "Ugyldigt brugernavn eller adgangskode. Prøv igen.";
-                return RedirectToAction("Index");  
+                return RedirectToAction("Index");
             }
 
             //Gemmer token og userId i Cookie
@@ -67,8 +67,22 @@ namespace FitSammenWebClient.Controllers
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = false,
+            };
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+            return RedirectToAction("Index");
+        }
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index");
         }
 
@@ -77,12 +91,12 @@ namespace FitSammenWebClient.Controllers
         public async Task<ActionResult> SignUpToWaitingList(int ClassId)
         {
             string? token = User.FindFirstValue("AccessToken");
-            if(string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(token))
             {
                 return Challenge();
             }
             WaitingListEntryResponse? result = await _waitingListLogic.AddMemberToWaitingListAsync(ClassId, token);
-            
+
             if (result == null)
             {
                 TempData["WaitingListStatus"] = "error";
@@ -94,16 +108,20 @@ namespace FitSammenWebClient.Controllers
             {
                 status = WaitingListStatus.Error;
             }
-            
+
             switch (status)
             {
                 case WaitingListStatus.Success:
                     TempData["WaitingListStatus"] = "success";
                     TempData["WaitingListMessage"] = $"Du er nu tilmeldt ventelisten. Din position er {result.WaitingListPosition}.";
                     break;
-                case WaitingListStatus.AlreadySignedUp:
+                case WaitingListStatus.AlreadySignedUpWL:
                     TempData["WaitingListStatus"] = "error";
                     TempData["WaitingListMessage"] = "Du er allerede tilmeldt ventelisten for dette hold.";
+                    break;
+                case WaitingListStatus.AlreadySignedUpMB:
+                    TempData["WaitingListStatus"] = "error";
+                    TempData["WaitingListMessage"] = "Du er allerede tilmeldt dette hold og kan ikke tilmeldes ventelisten.";
                     break;
                 case WaitingListStatus.Error:
                 default:

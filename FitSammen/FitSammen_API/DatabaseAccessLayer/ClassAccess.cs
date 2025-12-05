@@ -8,11 +8,12 @@ namespace FitSammen_API.DatabaseAccessLayer
 {
     public class ClassAccess : IClassAccess
     {
-        public ClassAccess(IConfiguration inConfiguration)
+        public ClassAccess(IConfiguration inConfiguration, IMemberAccess memberAccess)
         {
             // From configuration data get name of conn-string - and then fetch the conn-string
             string? useConnectionString = inConfiguration["ConnectionStringToUse"];
             ConnectionString = useConnectionString is not null ? inConfiguration.GetConnectionString(useConnectionString) : null;
+            _memberAccess = memberAccess;
         }
 
         public ClassAccess(string inConnectionString)
@@ -20,6 +21,7 @@ namespace FitSammen_API.DatabaseAccessLayer
             ConnectionString = inConnectionString;
         }
 
+        private readonly IMemberAccess _memberAccess;
         public string? ConnectionString { get; }
 
         public IEnumerable<Class> GetUpcomingClasses()
@@ -32,7 +34,6 @@ namespace FitSammen_API.DatabaseAccessLayer
                 "c.startTime, " +
                 "c.duration, " +
                 "c.capacity, " +
-                "c.memberCount, " +
                 "c.[name], " +
                 "c.[description], " +
                 "ct.classType, " +
@@ -119,10 +120,10 @@ namespace FitSammen_API.DatabaseAccessLayer
                     };
                     string name = reader.GetString(reader.GetOrdinal("name"));
                     int capacity = reader.GetInt32(reader.GetOrdinal("capacity"));
-                    int memberCount = reader.GetInt32(reader.GetOrdinal("memberCount"));
                     int durationInMinutes = reader.GetInt32(reader.GetOrdinal("duration"));
                     TimeOnly startTime = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("startTime")));
                     ClassType classType = Enum.Parse<ClassType>(reader.GetString(reader.GetOrdinal("classType")));
+                    int memberCount = _memberAccess.GetMemberCountFromClassId(id);
                     Class cls = new Class(id, trainingDate, instructor, description, room, name, capacity, memberCount, durationInMinutes, startTime, classType);
                     classes.Add(cls);
                 }
@@ -360,10 +361,10 @@ namespace FitSammen_API.DatabaseAccessLayer
             )
             BEGIN
             INSERT INTO Class(
-            name, description, memberCount, capacity, startTime, duration, trainingDate, classType_ID_FK, employeeUser_ID_FK, room_ID_FK)
+            name, description, capacity, startTime, duration, trainingDate, classType_ID_FK, employeeUser_ID_FK, room_ID_FK)
             OUTPUT INSERTED.class_ID
             VALUES(
-            @ClassName, @Description, @MemberCount, @Capacity, CONVERT(TIME(0), @NewStartDateTime),
+            @ClassName, @Description, @Capacity, CONVERT(TIME(0), @NewStartDateTime),
             @NewDuration, CONVERT(DATE, @NewStartDateTime), @ClassType, @EmployeeId, @RoomId);
             END
             ELSE
@@ -389,7 +390,6 @@ namespace FitSammen_API.DatabaseAccessLayer
                             //Insert parametre
                             readCommand.Parameters.AddWithValue("@ClassName", NewClass.Name);
                             readCommand.Parameters.AddWithValue("@Description", NewClass.Description);
-                            readCommand.Parameters.AddWithValue("@MemberCount", NewClass.MemberCount);
                             readCommand.Parameters.AddWithValue("@Capacity", NewClass.Capacity);
                             readCommand.Parameters.AddWithValue("@NewDuration", NewClass.DurationInMinutes);
                             readCommand.Parameters.AddWithValue("@ClassType", classTypeId);

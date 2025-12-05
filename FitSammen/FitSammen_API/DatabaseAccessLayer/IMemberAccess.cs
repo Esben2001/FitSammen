@@ -12,5 +12,6 @@ namespace FitSammen_API.DatabaseAccessLayer
         public int IsMemberOnWaitingList(int memberUserId, int classId);
         User FindUserByEmailAndPassword(string email, byte[] password);
         byte[] GetSaltByEmail(string email);
+        public int GetMemberCountFromClassId(int classId);
     }
 }

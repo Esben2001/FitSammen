@@ -19,8 +19,8 @@ namespace FitSammen_API.BusinessLogicLayer
         {
             BookingClassResult result;
             if(ccrDTO.TrainingDate < DateOnly.FromDateTime(DateTime.Now) || 
-                ccrDTO.StartTime < TimeOnly.Parse("7:00:00") || 
-                ccrDTO.StartTime > TimeOnly.Parse("17:00:00"))
+                ccrDTO.StartTime <= TimeOnly.Parse("7:00:00") || 
+                ccrDTO.StartTime >= TimeOnly.Parse("17:00:00"))
             {
                 return new BookingClassResult
                 {

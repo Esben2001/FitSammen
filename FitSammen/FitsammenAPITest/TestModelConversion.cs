@@ -113,14 +113,14 @@ namespace FitsammenAPITest
         {
             WaitingListResult result = new WaitingListResult
             {
-                Status = WaitingListStatus.AlreadySignedUp,
+                Status = WaitingListStatus.AlreadySignedUpWL,
                 WaitingListPosition = 2
             };
 
             WaitingListEntryResponseDTO dto = ModelConversion.ToWaitingListEntryResponseDTO(result);
 
             Assert.Equal(2, dto.WaitingListPosition);
-            Assert.Equal(WaitingListStatus.AlreadySignedUp, dto.Status);
+            Assert.Equal(WaitingListStatus.AlreadySignedUpWL, dto.Status);
         }
 
         [Fact]
