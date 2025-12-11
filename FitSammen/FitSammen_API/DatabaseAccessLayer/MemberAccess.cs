@@ -62,7 +62,7 @@ namespace FitSammen_API.DatabaseAccessLayer
                                 if (currCount >= capacity)
                                 {
                                     end = true;
-                                    createdMemberBookingId = 0;
+                                    return createdMemberBookingId = 0;
                                 }
                             }
                             else
