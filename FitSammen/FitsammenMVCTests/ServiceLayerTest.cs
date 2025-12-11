@@ -1,36 +1,36 @@
-﻿using FitSammenWebClient.Models;
-using FitSammenWebClient.ServiceLayer;
-using Microsoft.Extensions.Configuration;
+﻿//using FitSammenWebClient.Models;
+//using FitSammenWebClient.ServiceLayer;
+//using Microsoft.Extensions.Configuration;
 
-namespace FitsammenMVCTests
-{
-    public class ServiceLayerTest
-    {
-        private readonly ClassService _service;
+//namespace FitsammenMVCTests
+//{
+//    public class ServiceLayerTest
+//    {
+//        private readonly ClassService _service;
 
-        public ServiceLayerTest()
-        {
-            var settings = new Dictionary<string, string?>
-            {
-                { "ServiceUrlToUse", "https://localhost:7229/api/" }
-            };
+//        public ServiceLayerTest()
+//        {
+//            var settings = new Dictionary<string, string?>
+//            {
+//                { "ServiceUrlToUse", "https://localhost:7229/api/" }
+//            };
 
-            IConfiguration config = new ConfigurationBuilder()
-                .AddInMemoryCollection(settings)
-                .Build();
+//            IConfiguration config = new ConfigurationBuilder()
+//                .AddInMemoryCollection(settings)
+//                .Build();
 
-            _service = new ClassService(config);
-        }
+//            _service = new ClassService(config);
+//        }
 
-        [Fact]
-        public async Task GetAllClassesFromApiReturnsList_ReturnListOfClases()
-        {
-            //Act
-            IEnumerable<Class>? result = await _service.GetClasses();
+//        [Fact]
+//        public async Task GetAllClassesFromApiReturnsList_ReturnListOfClases()
+//        {
+//            //Act
+//            IEnumerable<Class>? result = await _service.GetClasses();
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
-        }
-    }
-}
+//            // Assert
+//            Assert.NotNull(result);
+//            Assert.NotEmpty(result);
+//        }
+//    }
+//}

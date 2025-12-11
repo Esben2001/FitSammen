@@ -24,7 +24,7 @@ namespace FitsammenAPITest
                 room: room,
                 name: "Strength",
                 capacity: 25,
-                memberCount: 0,
+                memberCount: 2,
                 durationInMinutes: 50,
                 startTime: new TimeOnly(18, 30),
                 classType: ClassType.StrengthTraining
@@ -70,7 +70,7 @@ namespace FitsammenAPITest
             var dto = ModelConversion.ToBookingResponseDTO(result);
             Assert.Equal(0, dto.BookingId);
             Assert.Equal("ClassFull", dto.Status);
-            Assert.Equal("Booking failed: Member has already booked this class.", dto.Message);
+            Assert.Equal("Booking failed: The class is already ful", dto.Message);
         }
 
         [Fact]

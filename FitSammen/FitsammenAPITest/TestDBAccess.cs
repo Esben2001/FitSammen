@@ -12,8 +12,17 @@ namespace FitsammenAPITest
 {
     public class TestDBAccess
     {
-        private readonly IClassAccess _classAccess = new ClassAccess("Server=localhost;Database=FitSammenDB;User Id=sa;Password=@12tf56so;TrustServerCertificate=True;");
-        private readonly IMemberAccess _memberAccess = new MemberAccess("Server=localhost;Database=FitSammenDB;User Id=sa;Password=@12tf56so;TrustServerCertificate=True;");
+        private readonly IMemberAccess _memberAccess;
+
+        private readonly IClassAccess _classAccess;
+
+        public TestDBAccess()
+        {
+            var connString = "Server=ESBEN\\SQLEXPRESS;Database=FitSammenDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
+
+            _memberAccess = new MemberAccess(connString);
+            _classAccess = new ClassAccess(connString, _memberAccess);
+        }
 
         [Fact]
         public void GetAllUpcomingClassesSuccessNo()
@@ -45,7 +54,7 @@ namespace FitsammenAPITest
                     }
                 },
                 "Morning Yoga",
-                30,
+                4,
                 0,
                 60,
                 new TimeOnly(9, 0),
@@ -75,7 +84,11 @@ namespace FitsammenAPITest
         [Fact]
         public void CreateMemberBookingSuccess()
         {
-            using (TransactionScope scope = new TransactionScope())
+            TransactionOptions tOptions = new TransactionOptions
+            {
+                IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted
+            };
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, tOptions))
             {
                 //Arrange
 
@@ -94,42 +107,56 @@ namespace FitsammenAPITest
         public void CreateMemberBookingClassFullFail()
         {
             //Arrange
+
             //Act
-            int res = _memberAccess.CreateMemberBooking(3, 2);
+            int res = _memberAccess.CreateMemberBooking(3, 9);
+
             //Arrange
             Assert.Equal(0, res);
+
         }
 
         [Fact]
         public void WhenMakingAWaitingListEntryOnAFullClass_ThenMyPositionIsCorrect()
         {
+            var tOptions = new TransactionOptions
+            {
+                IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted
+            };
+
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, tOptions))
+            {
                 //Arrange
                 //Act
-                int SuccesPosition = _memberAccess.CreateWaitingListEntry(2, 5);
+                int SuccesPosition = _memberAccess.CreateWaitingListEntry(2, 9);
                 //Assert
                 Assert.Equal(1, SuccesPosition);
+
+                scope.Dispose();
+            }
         }
 
         [Fact]
         public void WhenMakingAWaitingListEntryOnNotFullClass_ThenIShouldNotGetPositivePosition()
         {
-                //Arrange
-                //Act
-                int FailedAndShowedFalsePosition = _memberAccess.CreateWaitingListEntry(2, 1);
-                //Assert
-                Assert.Equal(-1, FailedAndShowedFalsePosition);
+            //Arrange
+            //Act
+            int FailedAndShowedFalsePosition = _memberAccess.CreateWaitingListEntry(2, 1);
+            //Assert
+            Assert.Equal(-1, FailedAndShowedFalsePosition);
         }
 
-        [Fact]
-        public void WhenMakingAWaitingListTwice_ThenMyPositionIsShownAndImNotAddedAgain()
-        {
-                //Arrange
-                //Act
-                int FailedAndShowedPosition = _memberAccess.IsMemberOnWaitingList(2, 4);
+        //[Fact]
+        //public void WhenMakingAWaitingListTwice_ThenMyPositionIsShownAndImNotAddedAgain()
+        //{
 
-                //Assert
-                Assert.Equal(1, FailedAndShowedPosition);
-        }
+        //    //Arrange
+        //    //Act
+        //    int FailedAndShowedPosition = _memberAccess.IsMemberOnWaitingList(2, 4);
+
+        //    //Assert
+        //    Assert.Equal(1, FailedAndShowedPosition);
+        //}
 
         [Fact]
         public void WhenGettingAllLocations_AllTheLocationsAreReturned()

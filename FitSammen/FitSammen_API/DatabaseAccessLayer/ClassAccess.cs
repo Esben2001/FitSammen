@@ -16,9 +16,10 @@ namespace FitSammen_API.DatabaseAccessLayer
             _memberAccess = memberAccess;
         }
 
-        public ClassAccess(string inConnectionString)
+        public ClassAccess(string inConnectionString, IMemberAccess memberAccess)
         {
             ConnectionString = inConnectionString;
+            _memberAccess = memberAccess;
         }
 
         private readonly IMemberAccess _memberAccess;
