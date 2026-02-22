@@ -1,72 +1,63 @@
 pipeline {
-  agent none
+  agent any
 
   stages {
 
-    stage('Build & Test (.NET SDK)') {
-      agent {
-        docker {
-          image 'mcr.microsoft.com/dotnet/sdk:8.0'
-          args '-u root:root'
-        }
-      }
+    stage('Checkout') {
       steps {
-        sh '''
-          set -e
-
-          echo "=== Repo root ==="
-          pwd
-          ls -la
-
-          echo "=== .NET version ==="
-          dotnet --version
-
-          echo "=== Find API csproj ==="
-          CSPROJ=$(find . -name "FitSammen_API.csproj" | head -n 1)
-          if [ -z "$CSPROJ" ]; then
-            echo "ERROR: Could not find FitSammen_API.csproj"
-            find . -maxdepth 8 -type f -name "*.csproj" -print
-            exit 1
-          fi
-          echo "Using csproj: $CSPROJ"
-
-          echo "=== Build ==="
-          dotnet build "$CSPROJ" -c Release
-
-          echo "=== Find solution (.sln) for tests ==="
-          SLN=$(find . -name "*.sln" | head -n 1)
-
-          if [ -n "$SLN" ]; then
-            echo "Using solution for tests: $SLN"
-            dotnet test "$SLN" -c Release
-          else
-            echo "No .sln found. Trying dotnet test on API project (may be OK if no tests)."
-            dotnet test "$CSPROJ" -c Release || true
-          fi
-        '''
+        checkout scm
       }
     }
 
-    stage('Docker Build') {
-      agent any
+    stage('Build & Test (API only, .NET in Docker)') {
+      steps {
+        script {
+          docker.image('mcr.microsoft.com/dotnet/sdk:8.0').inside('-u root:root') {
+            sh '''
+              set -e
+              echo "=== Repo root ==="
+              pwd
+              ls -la
+
+              echo "=== .NET version ==="
+              dotnet --version
+
+              echo "=== Find API csproj ==="
+              CSPROJ=$(find . -name FitSammen_API.csproj | head -n 1)
+              if [ -z "$CSPROJ" ]; then
+                echo "ERROR: Could not find FitSammen_API.csproj"
+                exit 1
+              fi
+              echo "Using csproj: $CSPROJ"
+
+              echo "=== Restore & Build ==="
+              dotnet restore "$CSPROJ"
+              dotnet build "$CSPROJ" -c Release --no-restore
+
+              echo "=== Test (API only) ==="
+              dotnet test "$CSPROJ" -c Release --no-build
+            '''
+          }
+        }
+      }
+    }
+
+    stage('Docker Build (API image)') {
       steps {
         sh '''
           set -e
-
           echo "=== Docker version ==="
           docker --version
 
           echo "=== Find Dockerfile ==="
-          DOCKERFILE=$(find . -maxdepth 12 -name "Dockerfile" | head -n 1)
-
+          DOCKERFILE=$(find . -name Dockerfile | head -n 1)
           if [ -z "$DOCKERFILE" ]; then
-            echo "ERROR: Could not find Dockerfile anywhere in repo."
-            echo "This usually means Dockerfile is not committed to GitHub."
-            echo "If you have it locally, add it to repo root (recommended) and push."
+            echo "ERROR: Could not find Dockerfile in repo. Commit/push it to GitHub."
             exit 1
           fi
-
           echo "Using Dockerfile: $DOCKERFILE"
+
+          echo "=== Docker build ==="
           docker build -t fitsammen-api:ci -f "$DOCKERFILE" .
         '''
       }
